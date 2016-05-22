@@ -4,17 +4,28 @@ import caffe
 import numpy as np
 from scipy.misc import imread, imresize
 import cPickle as pickle
+import os
 
 
 
 def main(net, input, output):
+	if not os.path.exists(output):
+		os.makedirs(output)
+	if output[-1] != '/':
+		output += '/'
+	if input[-1] != '/':
+		input += '/'
+
 	dirs = glob.glob(input + '/*/')
-	outs = [dir.split('/')[-2] + '_' + output if len(dirs) > 1 else output for dir in dirs]
+	if len(dirs) == 0:
+		dirs.append(input)
+	outs = ['features_' + dir.split('/')[-2] + '.p' if len(dirs) > 1 else 'features.p' for dir in dirs]
+
 	for i in range(0, len(dirs)):
 		filenames = glob.glob(dirs[i] + '*.jpg')
 		features = batch_predict(net, filenames)
 
-		with open(outs[i], 'w') as f:
+		with open(output + outs[i], 'w') as f:
 			pickle.dump(features, f)
 
 
@@ -95,12 +106,12 @@ if __name__ == "__main__":
 						help='Path to model definition prototxt')
 	parser.add_argument('-m', '--model', type=str, default='VGG_16.caffemodel',
 						help='Path to caffe model')
-	parser.add_argument('-fd', '--filesdir', type=str, default='imgs',
+	parser.add_argument('-fd', '--filesdir', type=str, default='imgs/train',
 						help='Path to a dir containing images')
 	parser.add_argument('-g', '--gpu', action='store_true',
 						help='Whether to use gpu training')
-	parser.add_argument('--out', type=str, default='features.pickle',
-						help='Name of the pickle file where to store the features')
+	parser.add_argument('--out', type=str, default='features/',
+						help='Folder where to store the pickle files with features')
 
 	args = parser.parse_args()
 	params = vars(args)

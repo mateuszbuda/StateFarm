@@ -14,17 +14,17 @@ featuresExt = ".p"
 def main():
 
 	print "Loading features ..."
-	features, labels = loadFeatures([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+	features, labels = loadFeatures(range(0, 10))
 
 	trainX, trainY, testX, testY = splitTrainTest(features, labels, train=0.5)
 
 
-	print "Training MLP ..."
+	print "Training MLP..."
 	mlp = trainMLP(trainX, trainY, hidden_layer_sizes=256)
 	print mlp
 	print "train error = " + str(mlp.score(trainX, trainY))
 
-	print "Evaluating ..."
+	print "Evaluating..."
 	score = mlp.score(testX, testY)
 	print "test error = " + str(score)
 
