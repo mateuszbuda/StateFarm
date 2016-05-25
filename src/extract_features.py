@@ -8,25 +8,30 @@ import os
 
 
 
-def main(net, input, output):
-	if not os.path.exists(output):
-		os.makedirs(output)
-	if output[-1] != '/':
-		output += '/'
+def main(net, input, outdir):
+	if not os.path.exists(outdir):
+		os.makedirs(outdir)
+	if outdir[-1] != '/':
+		outdir += '/'
 	if input[-1] != '/':
 		input += '/'
 
 	dirs = glob.glob(input + '/*/')
 	if len(dirs) == 0:
 		dirs.append(input)
-	outs = ['features_' + dir.split('/')[-2] + '.p' if len(dirs) > 1 else 'features.p' for dir in dirs]
+	outFeatures = ['features_' + dir.split('/')[-2] + '.p' if len(dirs) > 1 else 'features.p' for dir in dirs]
+	outfilenames = ['filenames_' + dir.split('/')[-2] + '.p' if len(dirs) > 1 else 'filenames.p' for dir in dirs]
 
 	for i in range(0, len(dirs)):
 		filenames = glob.glob(dirs[i] + '*.jpg')
 		features = batch_predict(net, filenames)
 
-		with open(output + outs[i], 'w') as f:
+		with open(outdir + outFeatures[i], 'w') as f:
 			pickle.dump(features, f)
+
+		with open(outdir + outfilenames[i], 'w') as f:
+			filenames = [fn.split('/')[-1] for fn in filenames]
+			pickle.dump(filenames, f)
 
 
 
@@ -77,7 +82,7 @@ def batch_predict(net, filenames):
 		for j in range(len(batch_range)):
 			allftrs[i + j, :] = ftrs[j, :]
 
-		print 'Done ' + str(i + len(batch_range)) + '/' + str(len(filenames))  + ' files'
+		print('Done ' + str(i + len(batch_range)) + '/' + str(len(filenames))  + ' files')
 
 	return allftrs
 

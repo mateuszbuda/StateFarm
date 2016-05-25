@@ -5,6 +5,7 @@
 src/imgs
 src/features
 *.caffemodel
+*.csv
 
 
 ### OSX ###

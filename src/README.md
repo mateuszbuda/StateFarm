@@ -6,15 +6,18 @@
 
 ### Dependencies ###
 
+- python3
 - [caffe](http://caffe.berkeleyvision.org)
 - [scikit-learn develop](http://scikit-learn.org/stable/developers/contributing.html#retrieving-the-latest-code) (with MLPClassifier)
+- numpy
 - scipy
+- pandas
 
 
 ### Feature extraction ###
 
 To extract training set features use `extract_features.py` script.
-If you have not changed imgs folder sctructure and saved model according to the instructions above, 
+If you have not changed `imgs/` folder structure and saved model according to the instructions above, 
 default parameter values will do.
 Otherwise run `python extract_features.py --help` to show usage.
 
@@ -29,9 +32,9 @@ python extract_features.py --filesdir imgs/test/
 ### Classification ###
 
 ```
-python classify.py
+python3 classify.py
 ```
 
 Assumes you have `features_c{0-10}.p` pickle files stored in `features/` and containing features generated with the procedure above.
-
+And you also need `features.p` and `filenames.p` files (also in `features/`) with test set features and corresponding file names.   
 
