@@ -4,8 +4,12 @@
 ### Custom ###
 src/imgs
 src/features
+src/dummy_imgs
+src/trainFeatures
+src/validationFeatures
+src/testFeatures
 *.caffemodel
-*.csv
+src/submissions
 
 
 ### OSX ###

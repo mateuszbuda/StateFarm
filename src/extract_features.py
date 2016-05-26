@@ -7,7 +7,6 @@ import cPickle as pickle
 import os
 
 
-
 def main(net, input, outdir):
 	if not os.path.exists(outdir):
 		os.makedirs(outdir)
@@ -32,7 +31,6 @@ def main(net, input, outdir):
 		with open(outdir + outfilenames[i], 'w') as f:
 			filenames = [fn.split('/')[-1] for fn in filenames]
 			pickle.dump(filenames, f)
-
 
 
 def batch_predict(net, filenames):
@@ -82,10 +80,9 @@ def batch_predict(net, filenames):
 		for j in range(len(batch_range)):
 			allftrs[i + j, :] = ftrs[j, :]
 
-		print('Done ' + str(i + len(batch_range)) + '/' + str(len(filenames))  + ' files')
+		print('Done ' + str(i + len(batch_range)) + '/' + str(len(filenames)) + ' files')
 
 	return allftrs
-
 
 
 def predict(net, in_data):
@@ -102,7 +99,6 @@ def predict(net, in_data):
 	return features
 
 
-
 if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser()
@@ -115,7 +111,7 @@ if __name__ == "__main__":
 						help='Path to a dir containing images')
 	parser.add_argument('-g', '--gpu', action='store_true',
 						help='Whether to use gpu training')
-	parser.add_argument('--out', type=str, default='features/',
+	parser.add_argument('--out', type=str, default='trainFeatures/',
 						help='Folder where to store the pickle files with features')
 
 	args = parser.parse_args()

@@ -2,28 +2,26 @@ __author__ = 'mateusz'
 
 import pickle
 import numpy as np
-from sklearn.neural_network import MLPClassifier
+from sknn.mlp import Layer, Classifier
 import pandas as pd
 import time
 
-
-featuresDir = 'features/'
+trainFeaturesDir = 'trainFeatures/'
+validationFeaturesDir = 'validationFeatures/'
+testFeaturesDir = 'testFeatures/'
 featuresPrefix = 'features_c'
 featuresExt = '.p'
-featuresTest = 'features.p'
-filenamesTest = 'filenames.p'
-threshold = 0.75
-
 
 
 def main():
-
-	trainX, trainY = loadTrainSet(range(0, 10))
+	trainX, trainY = loadTrainSet(trainFeaturesDir)
+	validX, validY = loadTrainSet(validationFeaturesDir)
 	testX, filenames = loadTestSet()
 
-	for layerSize in [256, 512, 1024, 2048]:
-		mlp = trainMLP(trainX, trainY, hidden_layer_sizes=layerSize)
+	for layerSize in [256, 512, 1024]:
+		mlp = trainMLP(trainX, trainY, validX, validY, hidden_layer_size=layerSize)
 		print('Train accuracy = ' + str(mlp.score(trainX, trainY)))
+		print('Validation accuracy = ' + str(mlp.score(validX, validY)))
 
 		print('Evaluating on test set...')
 		predictions = mlp.predict_proba(testX)
@@ -35,18 +33,17 @@ def main():
 	print('Done.')
 
 
-def loadTrainSet(classes):
-
+def loadTrainSet(dir, classes=range(0, 10)):
 	print('Loading train set features...')
 
-	fFile = featuresDir + featuresPrefix + str(classes[0]) + featuresExt
-	features = np.array(pickle.load( open( fFile, "rb" ), encoding='latin1' ))
+	fFile = trainFeaturesDir + featuresPrefix + str(classes[0]) + featuresExt
+	features = np.array(pickle.load(open(fFile, "rb"), encoding='latin1'))
 	labels = np.ones([len(features), 1]) * classes[0]
 
 	for c in classes[1:]:
-		fFile = featuresDir + featuresPrefix + str(c) + featuresExt
+		fFile = trainFeaturesDir + featuresPrefix + str(c) + featuresExt
 
-		featuresC = np.array(pickle.load( open( fFile, "rb" ), encoding='latin1' ))
+		featuresC = np.array(pickle.load(open(fFile, "rb"), encoding='latin1'))
 		features = np.vstack([features, featuresC])
 
 		labelsC = np.ones([len(featuresC), 1]) * c
@@ -55,35 +52,54 @@ def loadTrainSet(classes):
 	return features, labels.flatten()
 
 
-
 def loadTestSet():
-
 	print('Loading test set features...')
 
-	fFile = featuresDir + featuresTest
-	features = np.array(pickle.load( open( fFile, "rb" ), encoding='latin1' ))
-	fFile = featuresDir + filenamesTest
-	filenames = np.array(pickle.load( open( fFile, "rb" ), encoding='latin1' ))
+	fFile = testFeaturesDir + 'features.p'
+	features = np.array(pickle.load(open(fFile, "rb"), encoding='latin1'))
+	fFile = testFeaturesDir + 'filenames.p'
+	filenames = np.array(pickle.load(open(fFile, "rb"), encoding='latin1'))
 
 	return features, filenames
 
 
-
-def trainMLP(features, labels, activation='tanh', algorithm='adam', hidden_layer_sizes=(2048), alpha=0.0001):
-
+def trainMLP(trainX, trainY, validationX, validationY, activation='Tanh', algorithm='rmsprop',
+			 hidden_layer_size=2048, alpha=0.0001):
 	print('Learning...')
 
-	mlp = MLPClassifier(activation=activation, algorithm=algorithm, hidden_layer_sizes=hidden_layer_sizes, alpha=alpha, verbose=True)
+	trainX, trainY = shuffle(trainX, trainY)
+	validationX, validationY = shuffle(validationX, validationY)
+
+	mlp = Classifier(
+		layers=[
+			Layer(activation, units=hidden_layer_size),
+			Layer("Softmax", units=len(np.unique(trainY)))
+		], learning_rule=algorithm,
+		learning_rate=0.01,
+		learning_momentum=0.9,
+		batch_size=256,
+		n_stable=10,
+		n_iter=200,
+		regularize="L2",
+		weight_decay=alpha,
+		loss_type="mcc",
+		valid_set=(validationX, validationY),
+		verbose=True)
+
 	print(mlp)
 
-	mlp.fit(features, labels)
+	mlp.fit(trainX, trainY)
 
 	return mlp
 
 
+def shuffle(a, b):
+    assert len(a) == len(b)
+    p = np.random.permutation(len(a))
+    return a[p], b[p]
 
-def makeSubmission(predictions, filenames, discrete=False, info='submission_'):
 
+def makeSubmission(predictions, filenames, info='submission_', discrete=False, threshold=0.1):
 	print('Preparing submission file...')
 
 	if discrete:
@@ -96,8 +112,8 @@ def makeSubmission(predictions, filenames, discrete=False, info='submission_'):
 			predictions[i][argmax[1]] = 1
 
 	result = pd.DataFrame(predictions, columns=['c0', 'c1', 'c2', 'c3',
-                                                 'c4', 'c5', 'c6', 'c7',
-                                                 'c8', 'c9'])
+												'c4', 'c5', 'c6', 'c7',
+												'c8', 'c9'])
 	filenames = [f.split('/')[-1] for f in filenames]
 	result.loc[:, 'img'] = pd.Series(filenames, index=result.index)
 	timestr = time.strftime("%Y%m%d-%H%M%S")
@@ -107,9 +123,7 @@ def makeSubmission(predictions, filenames, discrete=False, info='submission_'):
 	result.to_csv("%s%s.csv" % (name, timestr), index=False)
 
 
-
 def splitTrainTest(X, Y, train=0.7, shuffle=True):
-
 	indices = range(len(X))
 
 	if shuffle:
@@ -117,7 +131,7 @@ def splitTrainTest(X, Y, train=0.7, shuffle=True):
 
 	split = int(round(len(indices) * train))
 	trainInd = indices[:split]
-	testInd = indices[split+1:]
+	testInd = indices[split + 1:]
 
 	trainX = X[trainInd]
 	trainY = Y[trainInd]
@@ -127,7 +141,8 @@ def splitTrainTest(X, Y, train=0.7, shuffle=True):
 	return trainX, trainY, testX, testY
 
 
-
 if __name__ == "__main__":
+
+	# TODO: parameters: hidden layers, feature folders, threshold
 
 	main()

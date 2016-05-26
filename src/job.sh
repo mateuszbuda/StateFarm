@@ -4,13 +4,13 @@
 #SBATCH -J DD2427
 
 # Set the time allocation to be charged
-#SBATCH -A allocation
+#SBATCH -A edu16.DD2427
 
 # Request a mail when the job starts and ends
 #SBATCH --mail-type=ALL
 
 # Maximum job elapsed time should be indicated whenever possible
-#SBATCH -t hh:mm:ss
+#SBATCH -t 04:00:00
 
 # Number of nodes that will be reserved for a given job
 #SBATCH --nodes=1
@@ -23,7 +23,16 @@
 
 # Run the executable file
 
+
 module load caffe/git-c6d93da
 module load cuda/7.0
 
-python extract_features.py --model_def VGG_16_deploy.prototxt --model VGG_16.caffemodel
+
+python2 split_train_val.py
+
+python2 extract_features.py;
+python2 extract_features.py --filesdir imgs/validation/ --out validationFeatures;
+python2 extract_features.py --filesdir imgs/test/ --out testFeatures;
+
+python3 classify.py
+
