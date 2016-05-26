@@ -1,0 +1,13 @@
+net: "VGG_16_train_val.prototxt"
+test_iter: 50
+test_interval: 200
+base_lr: 0.001
+lr_policy: "inv"
+gamma: 0.01
+power: 0.75
+display: 50
+max_iter: 20000
+momentum: 0.9
+weight_decay: 0.0005
+snapshot: 1000
+snapshot_prefix: "VGG_16_finetune"
