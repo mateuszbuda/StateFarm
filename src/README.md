@@ -53,3 +53,14 @@ python3 classify.py
 ```
 
 
+### Finetuning ###
+
+```
+python add_path.py validationset.csv <path>
+python add_path.py trainset.csv <path>
+```
+
+```
+/caffe/build/tools/caffe train -solver solver.prototxt -weights VGG_16.caffemodel -gpu all
+```
+

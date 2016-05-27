@@ -36,12 +36,12 @@ def main():
 def loadTrainSet(dir, classes=range(0, 10)):
 	print('Loading train set features...')
 
-	fFile = trainFeaturesDir + featuresPrefix + str(classes[0]) + featuresExt
+	fFile = dir + featuresPrefix + str(classes[0]) + featuresExt
 	features = np.array(pickle.load(open(fFile, "rb"), encoding='latin1'))
 	labels = np.ones([len(features), 1]) * classes[0]
 
 	for c in classes[1:]:
-		fFile = trainFeaturesDir + featuresPrefix + str(c) + featuresExt
+		fFile = dir + featuresPrefix + str(c) + featuresExt
 
 		featuresC = np.array(pickle.load(open(fFile, "rb"), encoding='latin1'))
 		features = np.vstack([features, featuresC])
@@ -75,14 +75,14 @@ def trainMLP(trainX, trainY, validationX, validationY, activation='Tanh', algori
 			Layer(activation, units=hidden_layer_size),
 			Layer("Softmax", units=len(np.unique(trainY)))
 		], learning_rule=algorithm,
-		learning_rate=0.01,
+		learning_rate=0.001,
 		learning_momentum=0.9,
 		batch_size=256,
 		n_stable=10,
 		n_iter=200,
 		regularize="L2",
 		weight_decay=alpha,
-		loss_type="mcc",
+		loss_type="mcc", #?
 		valid_set=(validationX, validationY),
 		verbose=True)
 

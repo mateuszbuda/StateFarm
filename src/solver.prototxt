@@ -11,3 +11,4 @@ momentum: 0.9
 weight_decay: 0.0005
 snapshot: 1000
 snapshot_prefix: "VGG_16_finetune"
+solver_mode: CPU

@@ -1,7 +1,7 @@
 name: "VGG_16"
 layers {
 	name: "data"
-	type: ImageData
+	type: IMAGE_DATA
 	include {
 		phase: TRAIN
 	}
@@ -12,7 +12,7 @@ layers {
 		mirror: false
 	}
 	image_data_param {
-		source: "trainset.csv"
+		source: "trainset_path.csv"
 		batch_size: 256
 		new_height: 224
 		new_width: 224
@@ -22,7 +22,7 @@ layers {
 }
 layers {
 	name: "data"
-	type: ImageData
+	type: IMAGE_DATA
 	include {
 		phase: TEST
 	}
@@ -33,7 +33,7 @@ layers {
 		mirror: false
 	}
 	image_data_param {
-		source: "validationset.csv"
+		source: "validationset_path.csv"
 		batch_size: 256
 		new_height: 224
 		new_width: 224
@@ -396,9 +396,9 @@ layers {
 	}
 }
 layers {
-	name: "fc8"
+	name: "fccustom"
 	bottom: "fc7"
-	top: "fc8"
+	top: "fccustom"
 	type: INNER_PRODUCT
 	inner_product_param {
 		num_output: 10
@@ -409,14 +409,14 @@ layers {
 layers {
 	name: "loss"
 	type: SOFTMAX_LOSS
-	bottom: "fc8"
+	bottom: "fccustom"
 	bottom: "label"
 	top: "loss/loss"
 }
 layers {
 	name: "accuracy/top1"
 	type: ACCURACY
-	bottom: "fc8"
+	bottom: "fccustom"
 	bottom: "label"
 	top: "accuracy@1"
 	include: {

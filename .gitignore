@@ -9,7 +9,10 @@ src/trainFeatures
 src/validationFeatures
 src/testFeatures
 *.caffemodel
+*.caffemodel.bcp
 src/submissions
+src/trainset_path.csv
+src/validationset_path.csv
 
 
 ### OSX ###
