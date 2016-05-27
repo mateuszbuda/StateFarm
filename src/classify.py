@@ -18,7 +18,7 @@ def main():
 	validX, validY = loadTrainSet(validationFeaturesDir)
 	testX, filenames = loadTestSet()
 
-	for layerSize in [256, 512, 1024]:
+	for layerSize in [256]:
 		mlp = trainMLP(trainX, trainY, validX, validY, hidden_layer_size=layerSize)
 		print('Train accuracy = ' + str(mlp.score(trainX, trainY)))
 		print('Validation accuracy = ' + str(mlp.score(validX, validY)))
@@ -63,8 +63,8 @@ def loadTestSet():
 	return features, filenames
 
 
-def trainMLP(trainX, trainY, validationX, validationY, activation='Tanh', algorithm='rmsprop',
-			 hidden_layer_size=2048, alpha=0.0001):
+def trainMLP(trainX, trainY, validationX, validationY, activation='Tanh', algorithm='adam',
+			 hidden_layer_size=2048, alpha=0.001):
 	print('Learning...')
 
 	trainX, trainY = shuffle(trainX, trainY)
@@ -72,13 +72,13 @@ def trainMLP(trainX, trainY, validationX, validationY, activation='Tanh', algori
 
 	mlp = Classifier(
 		layers=[
-			Layer(activation, units=hidden_layer_size),
-			Layer("Softmax", units=len(np.unique(trainY)))
+			Layer(activation, units=hidden_layer_size, dropout=0.2),
+			Layer("Softmax", units=len(np.unique(trainY)), dropout=0.5)
 		], learning_rule=algorithm,
-		learning_rate=0.001,
-		learning_momentum=0.9,
+		learning_rate=0.0005,
+		learning_momentum=0.5,
 		batch_size=256,
-		n_stable=10,
+		n_stable=25,
 		n_iter=200,
 		regularize="L2",
 		weight_decay=alpha,
