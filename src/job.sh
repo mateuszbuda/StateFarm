@@ -1,23 +1,23 @@
 #!/bin/bash
 
 # The job name is used to determine the name of job output and error files
-#SBATCH -J DD2427
+#SBATCH -J exp2.DD2427
 
 # Set the time allocation to be charged
-#SBATCH -A edu16.DD2427
+#SBATCH -A edu16.SF2568
 
 # Request a mail when the job starts and ends
 #SBATCH --mail-type=ALL
 
 # Maximum job elapsed time should be indicated whenever possible
-#SBATCH -t 04:00:00
+#SBATCH -t 13:00:00
 
 # Number of nodes that will be reserved for a given job
 #SBATCH --nodes=1
 
 
 #SBATCH -e error.log
-#SBATCH -o output.o
+#SBATCH -o output.log
 
 #SBATCH --gres=gpu:K80:2
 
@@ -27,12 +27,4 @@
 module load caffe/git-c6d93da
 module load cuda/7.0
 
-
-python2 split_train_val.py
-
-python2 extract_features.py;
-python2 extract_features.py --filesdir imgs/validation/ --out validationFeatures;
-python2 extract_features.py --filesdir imgs/test/ --out testFeatures;
-
-python3 classify.py
-
+caffe train -solver solver.prototxt -weights VGG_16.caffemodel -gpu all
