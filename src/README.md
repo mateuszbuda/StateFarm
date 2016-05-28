@@ -55,12 +55,16 @@ python3 classify.py
 
 ### Finetuning ###
 
+Append path to `scr/imgs/validation/` and `scr/imgs/test/`.
+
 ```
 python add_path.py validationset.csv <path>
 python add_path.py trainset.csv <path>
 ```
 
+And now you can run the finetuning. In case you don't have cuda capable GPU device, just skip `-gpu all` parameter.
+
 ```
-/caffe/build/tools/caffe train -solver solver.prototxt -weights VGG_16.caffemodel -gpu all
+caffe train -solver solver.prototxt -weights VGG_16.caffemodel -gpu all
 ```
 
