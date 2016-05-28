@@ -374,8 +374,8 @@ layers {
 	top: "fc6"
 	name: "fc6"
 	type: INNER_PRODUCT
-	param { lr_mult: 0 decay_mult: 0 }
-	param { lr_mult: 0 decay_mult: 0 }
+	param { lr_mult: 0.5 decay_mult: 0.5 }
+	param { lr_mult: 0.5 decay_mult: 0.5 }
 	inner_product_param {
 		num_output: 4096
 	}
@@ -402,8 +402,8 @@ layers {
 	top: "fc7"
 	name: "fc7"
 	type: INNER_PRODUCT
-	param { lr_mult: 0 decay_mult: 0 }
-	param { lr_mult: 0 decay_mult: 0 }
+	param { lr_mult: 0.5 decay_mult: 0.5 }
+	param { lr_mult: 0.5 decay_mult: 0.5 }
 	inner_product_param {
 		num_output: 4096
 	}
