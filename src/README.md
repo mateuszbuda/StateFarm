@@ -68,3 +68,8 @@ And now you can run the finetuning. In case you don't have cuda capable GPU devi
 caffe train -solver solver.prototxt -weights VGG_16.caffemodel -gpu all
 ```
 
+### Testing ###
+
+```
+python caffe_test.py -m VGG_16_finetune_iter_4000.caffemodel
+```
