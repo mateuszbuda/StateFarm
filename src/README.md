@@ -71,5 +71,7 @@ caffe train -solver solver.prototxt -weights VGG_16.caffemodel -gpu all
 ### Testing ###
 
 ```
-python caffe_test.py -m VGG_16_finetune_iter_4000.caffemodel
+python caffe_test.py -m VGG_16_finetune_iter_1000.caffemodel -fd imgs/test -gpu all
 ```
+
+Will output submission file for kaggle. 
