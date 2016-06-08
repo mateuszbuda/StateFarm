@@ -16,19 +16,22 @@ featuresExt = '.p'
 def main():
 	trainX, trainY = loadTrainSet(trainFeaturesDir)
 	validX, validY = loadTrainSet(validationFeaturesDir)
-	testX, filenames = loadTestSet()
+	X = np.vstack([trainX, validX])
+	Y = np.append(trainY, validY)
+	trainX, trainY, validX, validY = splitTrainTest(X, Y)
+	# testX, filenames = loadTestSet()
 
-	for layerSize in [256]:
+	for layerSize in [128, 256, 512, 1024, 2048]:
 		mlp = trainMLP(trainX, trainY, validX, validY, hidden_layer_size=layerSize)
 		print('Train accuracy = ' + str(mlp.score(trainX, trainY)))
 		print('Validation accuracy = ' + str(mlp.score(validX, validY)))
 
 		print('Evaluating on test set...')
-		predictions = mlp.predict_proba(testX)
+		# predictions = mlp.predict_proba(testX)
 
-		info = 'submission_' + str(layerSize) + '_'
-		makeSubmission(predictions, filenames, info=info)
-		makeSubmission(predictions, filenames, info=info, discrete=True)
+		# info = 'submission_' + str(layerSize) + '_'
+		# makeSubmission(predictions, filenames, info=info)
+		# makeSubmission(predictions, filenames, info=info, discrete=True)
 
 	print('Done.')
 
@@ -72,13 +75,13 @@ def trainMLP(trainX, trainY, validationX, validationY, activation='Tanh', algori
 
 	mlp = Classifier(
 		layers=[
-			Layer(activation, units=hidden_layer_size, dropout=0.2),
-			Layer("Softmax", units=len(np.unique(trainY)), dropout=0.5)
+			Layer(activation, units=hidden_layer_size, dropout=0.1),
+			Layer("Softmax", units=len(np.unique(trainY)), dropout=0.2)
 		], learning_rule=algorithm,
 		learning_rate=0.0005,
-		learning_momentum=0.5,
+		learning_momentum=0.9,
 		batch_size=256,
-		n_stable=25,
+		n_stable=10,
 		n_iter=200,
 		regularize="L2",
 		weight_decay=alpha,
@@ -123,8 +126,8 @@ def makeSubmission(predictions, filenames, info='submission_', discrete=False, t
 	result.to_csv("%s%s.csv" % (name, timestr), index=False)
 
 
-def splitTrainTest(X, Y, train=0.7, shuffle=True):
-	indices = range(len(X))
+def splitTrainTest(X, Y, train=0.8, shuffle=True):
+	indices = list(range(len(X)))
 
 	if shuffle:
 		np.random.shuffle(indices)
