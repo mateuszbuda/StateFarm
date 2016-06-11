@@ -3,6 +3,7 @@
 
 ### Custom ###
 src/imgs
+src/imgsds
 src/features
 src/dummy_imgs
 src/trainFeatures

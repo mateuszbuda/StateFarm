@@ -69,6 +69,12 @@ python add_path.py validationset.csv <path>
 python add_path.py trainset.csv <path>
 ```
 
+Downsize images to `320x240`:
+
+```
+sips -Z 320 *.jpg
+```
+
 And now you can run the finetuning. In case you don't have cuda capable GPU device, just skip `-gpu all` parameter.
 
 ```
