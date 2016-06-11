@@ -16,6 +16,7 @@ layers {
 		batch_size: 64
 		new_height: 224
 		new_width: 224
+		shuffle: true
 	}
 	top: "data"
 	top: "label"
@@ -37,6 +38,7 @@ layers {
 		batch_size: 64
 		new_height: 224
 		new_width: 224
+		shuffle: true
 	}
 	top: "data"
 	top: "label"

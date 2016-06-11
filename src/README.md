@@ -55,7 +55,14 @@ python3 classify.py
 
 ### Finetuning ###
 
-Append path to `scr/imgs/validation/` and `scr/imgs/test/`.
+Shuffle data (optional and you need `shuf`)
+
+```
+cat trainset.csv | shuf --output=trainset.csv
+cat validationset.csv | shuf --output=validationset.csv
+```
+
+Append path to `scr/imgs/validation/` and `scr/imgs/train/`.
 
 ```
 python add_path.py validationset.csv <path>
@@ -74,4 +81,5 @@ caffe train -solver solver.prototxt -weights VGG_16.caffemodel -gpu all
 python caffe_test.py -m VGG_16_finetune_iter_1000.caffemodel -fd imgs/test -gpu all
 ```
 
-Will output submission file for kaggle. 
+Will output submission file for kaggle.
+
