@@ -14,7 +14,7 @@ layers {
 	}
 	image_data_param {
 		source: "trainset_path.csv"
-		batch_size: 64
+		batch_size: 48
 		shuffle: true
 	}
 	top: "data"
@@ -35,7 +35,7 @@ layers {
 	}
 	image_data_param {
 		source: "validationset_path.csv"
-		batch_size: 64
+		batch_size: 48
 		shuffle: true
 	}
 	top: "data"
